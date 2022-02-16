@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORM INDEX</title>
-    <style>
-        /* BASIC */
-
        
         @import url('https://fonts.googleapis.com/css?family=Montserrat');
 
@@ -261,28 +250,3 @@
         #icon {
             width: 60%;
         }
-    </style>
-</head>
-
-<body>
-    <div class="main fadeInDown">
-
-        <div id="formContent">
-            <div class="fadeIn fourth ">
-                <img src="index/foto.jpg" id="icon" alt="User Icon" style="width: 150px">
-            </div>
-
-            <form id="form_login">
-                <input type="hidden" name="auth" value="1">
-                <input type="text" id="login" class="fadeIn second input_formulario" name="login" placeholder="Login"
-                    required>
-                <input type="password" id="senha" class=" fadeIn second input_formulario" name="senha"
-                    placeholder="Senha" required>
-                <button class="botao">LOGAR</button>
-
-            </form>
-        </div>
-    </div>
-</body>
-
-</html>

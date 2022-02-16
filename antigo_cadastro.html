@@ -11,43 +11,36 @@
     <script src="index/js/jquery.js"></script>
     <script src="index/js/mascara.js"></script>
     <script src="index/js/ddi.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 </head>
 
 <body>
-    <div class="main fadeInDown">
-        <div id="formContent">
-            <div class="fadeIn fourth ">
-                <img src="index/foto.jpg" id="icon" alt="User Icon" style="width: 150px">
-            </div>
+    <div class="menu">
+        <h1>MENU</h1>
+    </div>
+    <div class="main">
+        <div class="box_form">
             <form id="form_cadastro">
 
 
-                <input type="text" placeholder="nomeCompleto" class="fadeIn second input_formulario" id="nomeCompleto"
+                <input type="text" placeholder="nomeCompleto" class="input" id="nomeCompleto"
                     onchange="ultimoNome(), VALIDAR.nome(this.id,this.value)" required minlength="5">
 
 
-                <input type="text" placeholder="birthday" class="fadeIn second input_formulario item mask-date"
-                    id="birthday" required minlength="9" onchange="VALIDAR.nascimento(this.id,this.value)">
-
-                <input type="email" placeholder="email" class="fadeIn second input_formulario item" id="email" required
+                <input type="text" placeholder="birthday" class="input item mask-date" id="birthday" required
+                    minlength="9" onchange="VALIDAR.nascimento(this.id,this.value)">
+                    
+                <input type="email" placeholder="email" class="input item" id="email" required
                     onchange="VALIDAR.email(this.id,this.value)">
-                <input type="text" placeholder="address" class="fadeIn second input_formulario item" id="address"
-                    required>
-                <select id="SelecionaPais" class="fadeIn second select_formulario" required></select>
+                <input type="text" placeholder="address" class="input item" id="address" required>
+                <select id="SelecionaPais" class="select" required></select>
+               
 
-
-                <input type="text" placeholder="zipCode" class="fadeIn second input_formulario mask-cep item"
-                    id="zipCode" required>
-                <input type="text" placeholder="mobileNumberPhone"
-                    class="fadeIn second input_formulario item mask-phone" id="mobileNumberPhone" required
-                    minlength="15">
-                <input type="text" placeholder="userName" class="fadeIn second input_formulario item" id="userName"
-                    required>
-                <input type="password" placeholder="password" class="fadeIn second input_formulario item" id="password"
-                    required>
-                <input type="text" placeholder="bonusCode" class="fadeIn second input_formulario item" id="bonusCode">
+                <input type="text" placeholder="zipCode" class="input mask-cep item" id="zipCode" required>
+                <input type="text" placeholder="mobileNumberPhone" class="input item mask-phone" id="mobileNumberPhone"
+                    required minlength="15">
+                <input type="text" placeholder="userName" class="input item" id="userName" required>
+                <input type="password" placeholder="password" class="input item" id="password" required>
+                <input type="text" placeholder="bonusCode" class="input item" id="bonusCode">
 
                 <!--hidden  -->
 
@@ -62,12 +55,12 @@
 
                 <div class="form_btn">
                     <!-- <a href="recuperar.html" class="form_lembrar">Esqueci a senha</a> -->
-                    <button type="submit" class="botao">CADASTRAR</button>
+                    <button type="submit" class="btn_logar">CADASTRAR</button>
             </form>
-
         </div>
-        <a href="index.html">LOGIN</a>
     </div>
+    </div>
+
     <script>
         jQuery(document).ready(function ($) {
             initializeMasks();
@@ -75,23 +68,8 @@
         });
         $("#form_cadastro").submit(function (e) {
             e.preventDefault();
-            let data = jsonEnvio('item');
-            cadastrar(data)
+            console.log(jsonEnvio('item'))
         })
-
-        function cadastrar(data) {
-            axios({
-                method: 'post',
-                url: 'http://192.168.18.29:3000/users/auth',
-                data: data
-            }).then(function (response) {
-                console.log(response)
-            }).catch(function (error) {
-                console.log(error.response.data);
-            });
-
-            console.log(data)
-        }
 
 
 
@@ -250,6 +228,7 @@
         }
 
     </script>
+
 </body>
 
 </html>
