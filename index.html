@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,16 +33,16 @@
         function logar() {
             axios({
                 method: 'post',
-                url: 'http://192.168.18.29:3000/users/auth',
+                url: 'https://api-homolog.jetpix.bet/users/auth',
                 data: {
                     userName: $("#login").val(),
                     password: $("#senha").val(),
                 }
             }).then(function (response) {
-                success(response)
+                alert('Sucesso!')
             }).catch(function (error) {
-               console.log(error.response.data);
-
+                console.log(error.response.data);
+                alert('Erro na autenticacao')
             });
 
         }

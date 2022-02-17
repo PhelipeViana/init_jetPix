@@ -36,7 +36,7 @@
                 <input type="text" placeholder="address" class="fadeIn second input_formulario item" id="address"
                     required>
                 <select id="SelecionaPais" class="fadeIn second select_formulario" required></select>
-
+                <input type="text" placeholder="City" class="fadeIn second input_formulario item" id="city" required>
 
                 <input type="text" placeholder="zipCode" class="fadeIn second input_formulario mask-cep item"
                     id="zipCode" required>
@@ -82,12 +82,14 @@
         function cadastrar(data) {
             axios({
                 method: 'post',
-                url: 'http://192.168.18.29:3000/users/auth',
+                url: 'https://api-homolog.jetpix.bet/users/register',
                 data: data
             }).then(function (response) {
                 console.log(response)
+                alert('Sucesso!')
             }).catch(function (error) {
                 console.log(error.response.data);
+                alert('Erro no Cadastro')
             });
 
             console.log(data)

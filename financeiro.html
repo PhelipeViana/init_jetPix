@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" href="index/css/financeiro.css">
+    <script src="index/js/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index/js/mascara.js"></script>
+    <script src="index/js/cpf.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/lottie-player.js"></script>
+
+    <title>Financeiro</title>
+    <style>
+        .cx_group_btn {
+            display: flex;
+        }
+
+        #await_qrcode {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .botao_tab {
+            width: 50%;
+        }
+
+        .botao_tab.btn_ativo {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main fadeInDown">
+
+        <div id="formContent">
+            <div class="cx_group_btn">
+                <button class="botao_tab btn_ativo" data-page="depositar">DEPOSITAR</button>
+                <button class="botao_tab" data-page="sacar">SACAR</button>
+            </div>
+            <div id="depositar" class="tela">
+                <h1>GERAR DEPOSITO</h1>
+             
+
+                <input type="text" id="name" class="fadeIn second input_formulario item" placeholder="Nome Completo"
+                    onchange="VALIDAR.nome(this.id,this.value)" value="Phelipe Gabriel dos Santos Viana">
+
+                <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
+                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)" value="773.794.542-34">
+                <input type="text" id="amount" class=" fadeIn second input_formulario money item" placeholder="Valor"
+                    onchange="VALIDAR.money(this.id,this.value)" value="1000.00">
+
+                <button class="botao" id="btn_gerar_pix">GERAR PIX</button>
+
+            </div>
+            <div id="await_qrcode" class="tela" style="display: none;">
+                <lottie-player autoplay loop=false mode="normal"
+                    src="https://assets2.lottiefiles.com/private_files/lf30_6miolmlf.json" style="width: 300px">
+                </lottie-player>
+
+            </div>
+
+            <div id="qrcode" class="tela" style="display: none;">
+                <h1>2222</h1>
+                <div class="fadeIn fourth ">
+                    <div id="teste"></div>
+
+                    <a href="#" id="link_qrcode"></a>
+                </div>
+
+
+
+            </div>
+            <div id="sacar" class="tela" style="display: none;">
+                <h1>SACAR</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        jQuery(document).ready(function ($) {
+            initializeMasks();
+            
+        });
+
+        $(".botao_tab").on('click', function (e) {
+            $(".botao_tab").removeClass('btn_ativo')
+            $(this).addClass('btn_ativo')
+            let tela = $(this).data('page');
+            $(".tela").hide()
+            $("#" + tela).show()
+        })
+
+
+        function subPage(idTela) {
+            $(".tela").hide()
+            $("#" + idTela).show()
+        }
+
+
+        $("#btn_gerar_pix").on('click', function (e) {
+            subPage("await_qrcode")
+
+            let data = {
+                amount: $("#amount").data('valor'),
+                documentNumber: $("#documentNumber").val(),
+                name: $("#name").val()
+            }
+            axios({
+                method: 'post',
+                url: 'https://api-homolog.jetpix.bet/transactions/generate-pix',
+                data: data
+            }).then(function (response) {
+                let new_qrcode = response.data.url;
+                let new_link = response.data.brcode;
+                console.log(response)
+                subPage("qrcode");
+
+                $("#teste").html(`Append <img src="${new_qrcode}"
+                        id="foto_qrcode" alt="QRCODE" style="width: 150px">`)
+
+                $("#link_qrcode")
+                    .attr('href', new_link)
+                    .html(new_link)
+                console.log(new_qrcode);
+                console.log(new_link);
+
+
+
+            }).catch(function (error) {
+                console.log(error.response.data);
+                alert('Erro no Cadastro')
+            });
+
+        })
+
+        function initializeMasks() {
+
+            $(".mask-cpf").mask("999.999.999-99");
+            $('.money').mask("#.##0,00", { reverse: true }).attr('maxlength', '9');
+            $(".mask-dinheiro")
+                .mask("######.##", {
+                    reverse: true
+                })
+        }
+
+        const VALIDAR = {
+
+            cpf: function (id, cpf) {
+                let status = CPF.validate(cpf);
+                if (status) {
+                    $("#" + id).removeClass('nok').addClass('ok')
+                } else {
+                    $("#" + id).removeClass('ok').addClass('nok')
+                }
+
+            },
+            nome: function (id, nome) {
+                let explode = nome.split(" ");
+                let space = nome.indexOf(' ');
+
+                if (space > 0) {
+                    let qtdnome = explode[1].length;
+                    if (qtdnome < 2) {
+                        $("#" + id)
+                            .removeClass('ok')
+                            .addClass('nok')
+                    } else {
+                        $("#" + id)
+                            .removeClass('nok')
+                            .addClass('ok')
+                    }
+                } else {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+                }
+
+
+            },
+            money: function (id, money) {
+                let val_min = 30;
+                let val_max = 20000.00;
+                let valor = money.split(',');
+                let real_explode = valor[0];
+                let real = real_explode.replace(".", "");
+                let centavos = '.' + valor[1];
+                let count_total = real + valor[1];
+                let amount = real + centavos;
+                if ((real < val_min) || (amount > val_max)) {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+
+                } else {
+                    $("#" + id)
+                        .removeClass('nok')
+                        .addClass('ok')
+                        .data('valor', amount)
+                }
+            }
+        }
+
+        function jsonEnvio(cl) {
+            let classe = document.getElementsByClassName(cl);
+            let json = {};
+            for (let i = 0; i < classe.length; i++) {
+                json[classe[i].getAttribute("id")] = classe[i].value;
+            }
+            return json;
+        }
+
+    </script>
+</body>
+
+</html>
