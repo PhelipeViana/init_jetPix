@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,39 +21,63 @@
             </div>
 
             <input type="text" id="login" class="fadeIn second input_formulario" name="login" placeholder="Login"
-                required value="cleison">
+                required>
             <input type="password" id="senha" class=" fadeIn second input_formulario" name="senha" placeholder="Senha"
-                required value="123">
+                required>
             <button class="botao" onclick="logar()">ENTRAR</button>
 
 
         </div>
-        <a href="cadastro.html">CADASTRO</a>
+
     </div>
     <script>
         function logar() {
-            axios({
-                method: 'post',
-                url: 'https://api-homolog.jetpix.bet/users/auth',
-                data: {
-                    userName: $("#login").val(),
-                    password: $("#senha").val(),
-                }
-            }).then(function (response) {
-                alert('Sucesso!')
-            }).catch(function (error) {
-                console.log(error.response.data);
-                alert('Erro na autenticacao')
-            });
+            let data = {
+                userName: $("#login").val(),
+                password: $("#senha").val(),
+            }
+
+            if (validar(data)) {
+                axios({
+                    method: 'post',
+                    url: 'https://api-homolog.jetpix.bet/users/auth',
+                    data: data
+                }).then(function (response) {
+
+                    success(response)
+
+                }).catch(function (error) {
+
+                    error()
+                });
+            } else {
+                error()
+            }
+
 
         }
 
         function error() {
-            alert('Login/Seha não confere')
+            alert('Login/Senha não confere')
         }
         function success(response) {
-            localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(response.data))
+            let token = response.data.token;
+            let user = response.data.user;
+            localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(user))
+            localStorage.setItem('@JETPIX_TOKEN', token)
+            alert('sucesso!')
+            window.location.assign('financeiro.html');
+        }
 
+        function validar(data) {
+            let valores = Object.values(data);
+            let retorno = "";
+
+            if (valores.includes(undefined) || valores.includes(0) || valores.includes("")) {
+                return false
+            } else {
+                return true
+            }
         }
 
     </script>

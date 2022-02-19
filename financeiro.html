@@ -7,11 +7,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
     <link rel="stylesheet" href="index/css/financeiro.css">
-    <script src="index/js/jquery.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="index/js/mascara.js"></script>
-    <script src="index/js/cpf.js"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/lottie-player.js"></script>
+
 
     <title>Financeiro</title>
     <style>
@@ -26,39 +22,92 @@
         }
 
         .botao_tab {
-            width: 50%;
+            background-color: #56baed;
+            border: none;
+            color: white;
+            padding: 15px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 13px;
+            width: 45%;
+            -webkit-box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+            box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
+            -webkit-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+            margin: 5px 20px 40px 20px;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -ms-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
         }
 
         .botao_tab.btn_ativo {
             background-color: red;
         }
+
+        .tela_lottie-player {
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+        }
+
+        .text-danger {
+            color: 'red';
+        }
+
+        .text-primary {
+            color: 'blue';
+        }
+
+        .select_tipo {
+
+            background-color: #f6f6f6;
+            border: none;
+            color: #0d0d0d;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            width: 30%;
+            border: 2px solid #f6f6f6;
+            -webkit-transition: all 0.5s ease-in-out;
+            -moz-transition: all 0.5s ease-in-out;
+            -ms-transition: all 0.5s ease-in-out;
+            -o-transition: all 0.5s ease-in-out;
+            transition: all 0.5s ease-in-out;
+            -webkit-border-radius: 5px 5px 5px 5px;
+            border-radius: 5px 5px 5px 5px;
+        }
     </style>
 </head>
 
-<body>
+<body style="display: none;">
     <div class="main fadeInDown">
 
         <div id="formContent">
             <div class="cx_group_btn">
                 <button class="botao_tab btn_ativo" data-page="depositar">DEPOSITAR</button>
-                <button class="botao_tab" data-page="sacar">SACAR</button>
+                <button class="botao_tab" data-page="sacar" id="tela_sacar">SACAR</button>
             </div>
-            <div id="depositar" class="tela">
+            <h1 class="saldo"></h1>
+            <div id="depositar" class="tela" style="display: none;">
                 <h1>GERAR DEPOSITO</h1>
-             
-
-                <input type="text" id="name" class="fadeIn second input_formulario item" placeholder="Nome Completo"
-                    onchange="VALIDAR.nome(this.id,this.value)" value="Phelipe Gabriel dos Santos Viana">
 
                 <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
-                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)" value="773.794.542-34">
+                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)">
                 <input type="text" id="amount" class=" fadeIn second input_formulario money item" placeholder="Valor"
-                    onchange="VALIDAR.money(this.id,this.value)" value="1000.00">
+                    onchange="VALIDAR.money(this.id,this.value)">
 
                 <button class="botao" id="btn_gerar_pix">GERAR PIX</button>
 
             </div>
-            <div id="await_qrcode" class="tela" style="display: none;">
+            <div id="await_qrcode" class="tela tela_lottie-player" style="display: none;">
                 <lottie-player autoplay loop=false mode="normal"
                     src="https://assets2.lottiefiles.com/private_files/lf30_6miolmlf.json" style="width: 300px">
                 </lottie-player>
@@ -66,29 +115,165 @@
             </div>
 
             <div id="qrcode" class="tela" style="display: none;">
-                <h1>2222</h1>
+                <h1 id="retorno_valor_gerado"></h1>
                 <div class="fadeIn fourth ">
-                    <div id="teste"></div>
+                    <img src="" id="foto_qrcode" alt="QRCODE" style="width: 250px">
+                    <hr>
+                </div>
+                <input type="text" id="link_qrcode" style="border: none;">
+                <button id="btn_copia_link" class="botao">COPIAR LINK DE PAGAMENTO</button>
+            </div>
+            <div id="sacar" class="tela">
+                <h1>SACAR</h1>
+                <input type="text" id="amountsaque" class="fadeIn second input_formulario mask-dinheiro item"
+                    onkeyup="VALIDAR.limite(this.id,this.value)" onkeydown="VALIDAR.limite(this.id,this.value)">
+                <div style="display: flex;">
+                    <select class="select_tipo" id="tipo_chave">
+                        <option value="" selected>Tipo</option>
+                        <option value="cpf">CPF</option>
+                        <option value="email">EMAIL</option>
+                        <option value="telefone">TELEFONE</option>
+                        <option value="aleatoria">CHAVE ALEATORIA</option>
+                    </select>
+                    <div id="input_validate"></div>
 
-                    <a href="#" id="link_qrcode"></a>
                 </div>
 
 
+                <button class="botao" id="btn_solicitar_saque">SOLICITAR SAQUE</button>
+            </div>
+            <div id="sucesso_saque" class="tela" style="display: none;">
+                <div class="tela_lottie-player">
+                    <lottie-player autoplay mode="normal"
+                        src="https://assets6.lottiefiles.com/packages/lf20_atippmse.json" style="width: 300px">
 
+                    </lottie-player>
+                </div>
+                <h1>PROCESSADO COM SUCESSO</h1>
+                <button class="botao btn_ativo" onclick="solicitarNovamente()">VOLTAR</button>
             </div>
-            <div id="sacar" class="tela" style="display: none;">
-                <h1>SACAR</h1>
+            <div id="erro_saque" class="tela" style="display: none;">
+                <div class=" tela_lottie-player">
+                    <lottie-player autoplay mode="normal"
+                        src="https://assets7.lottiefiles.com/packages/lf20_sii02z44.json" style="width: 350px">
+                    </lottie-player>
+                </div>
+                <button class="botao btn_ativo" onclick="solicitarNovamente()">SOLICITAR NOVAMENTE</button>
             </div>
+
 
         </div>
     </div>
+    <script src="index/js/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index/js/mascara.js"></script>
+    <script src="index/js/cpf.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/lottie-player.js"></script>
 
     <script>
 
+        let user = localStorage.getItem('@JETPIX_USERDATA')
+        let token = localStorage.getItem('@JETPIX_TOKEN')
+        let limit_saque = 0;
+        let URL = 'https://api-homolog.jetpix.bet/';
+
         jQuery(document).ready(function ($) {
             initializeMasks();
-            
+            atualizaSaldo()
+            verifySessao()
+
         });
+        $("#tela_sacar").on('click', function (e) {
+            atualizaSaldo();
+        })
+        $("#tipo_chave").on('change', function (e) {
+            let valor = $(this).val()
+            let corpo_input = "";
+            switch (valor) {
+                case 'cpf':
+                    corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item mask-cpf'
+                        placeholder="DIGITE SEU CPF" onchange="VALIDAR.cpf(this.id,this.value)">`
+                    initializeMasks();
+                    break;
+                case 'email':
+                    corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item'
+                        placeholder="DIGITE SEU EMAIL" onchange="VALIDAR.email(this.id,this.value)">`
+                    initializeMasks();
+                    break;
+                case 'telefone':
+                    corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario  mask-phone item'
+                        placeholder="DIGITE SEU TELEFONE" onchange="VALIDAR.telefone(this.id,this.value)">`
+                    initializeMasks();
+                    break;
+                case 'aleatoria':
+                    corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item'
+                        placeholder="INSIRA A CHAVE" onchange="VALIDAR.chave(this.id,this.value)">`
+                    initializeMasks();
+                    break;
+
+                default:
+                    corpo_input = ``;
+                    break;
+            }
+
+            $("#input_validate").html(corpo_input)
+        })
+
+        function atualizaSaldo() {
+            axios({
+                method: 'get',
+                url: URL + 'users/balance',
+                headers: { auth: token }
+            }).then(function (response) {
+                limit_saque = response.data.balance
+                let user = localStorage.getItem('@JETPIX_USERDATA')
+                let obj = JSON.parse(user);
+                delete obj.balance
+                obj.balance = limit_saque;
+                localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(obj))
+                dadosUsuario();
+            }).catch(function (error) {
+                if (error.error == "Invalid token") {
+                    finalizarSessao()
+                }
+            });
+
+        }
+
+        function finalizarSessao() {
+
+            localStorage.removeItem('@JETPIX_USERDATA')
+            localStorage.removeItem('@JETPIX_TOKEN')
+            window.location.assign('index.html')
+        }
+        function verifySessao() {
+
+            if (localStorage.getItem("@JETPIX_TOKEN") === null) {
+                finalizarSessao()
+            } else {
+                $("body").show()
+            }
+
+        }
+
+        function dadosUsuario() {
+            let user = localStorage.getItem('@JETPIX_USERDATA')
+            let dados = JSON.parse(user);
+            let balance = dados.balance;
+            let format_balance = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)
+            $(".saldo").html(format_balance)
+            $("#amountsaque").attr('placeholder', 'Valor máximo: ' + format_balance)
+        }
+
+
+
+        function solicitarNovamente() {
+            subPage('sacar')
+            $(".botao_tab").removeClass('btn_ativo');
+            $("#tela_sacar").addClass('btn_ativo')
+            $(".item").val('')
+        }
+
 
         $(".botao_tab").on('click', function (e) {
             $(".botao_tab").removeClass('btn_ativo')
@@ -106,38 +291,87 @@
 
 
         $("#btn_gerar_pix").on('click', function (e) {
-            subPage("await_qrcode")
+
 
             let data = {
                 amount: $("#amount").data('valor'),
-                documentNumber: $("#documentNumber").val(),
-                name: $("#name").val()
+                documentNumber: $("#documentNumber").data('valor'),
             }
-            axios({
-                method: 'post',
-                url: 'https://api-homolog.jetpix.bet/transactions/generate-pix',
-                data: data
-            }).then(function (response) {
-                let new_qrcode = response.data.url;
-                let new_link = response.data.brcode;
-                console.log(response)
-                subPage("qrcode");
 
-                $("#teste").html(`Append <img src="${new_qrcode}"
-                        id="foto_qrcode" alt="QRCODE" style="width: 150px">`)
+            if (VALIDAR.data(data)) {
+                subPage("await_qrcode")
+                axios({
+                    method: 'post',
+                    url: URL + 'transactions/generate-pix',
+                    data: data,
+                    headers: { auth: token }
+                }).then(function (response) {
+                    let new_qrcode = response.data.url;
+                    let new_link = response.data.brcode;
+                    subPage("qrcode");
+                    $("#foto_qrcode").attr('src', new_qrcode)
+                    $("#link_qrcode").val(new_link)
+                    const copyButton = document.getElementById('btn_copia_link');
+                    const textInput = document.getElementById('link_qrcode');
 
-                $("#link_qrcode")
-                    .attr('href', new_link)
-                    .html(new_link)
-                console.log(new_qrcode);
-                console.log(new_link);
+                    copyButton.addEventListener('click', () => {
+                        textInput.select();
+                        document.execCommand('copy');
+                        copyButton.innerHTML = 'COPIADO!'
+                    });
+
+                }).catch(function (error) {
+                    subPage("depositar")
+                    alert('Ops! Tente novamente mais tarde')
+
+                });
+
+            } else {
+                alert('Ops! Confira os dados')
+            }
+
+        })
+
+        $("#btn_solicitar_saque").on('click', function (e) {
 
 
+            let data = {
+                amount: $("#amountsaque").data('valor'),
+                pixId: $("#pixId").data('valor'),
+            }
+            // console.log(data)
+            // console.log(VALIDAR.data(data))
 
-            }).catch(function (error) {
-                console.log(error.response.data);
-                alert('Erro no Cadastro')
-            });
+            if (VALIDAR.data(data)) {
+                $("#btn_solicitar_saque")
+                    .html('processando....')
+                    .prop('disabled', true)
+
+
+                axios({
+                    method: 'post',
+                    url: URL + 'transactions/request-transfer',
+                    data: data,
+                    headers: { auth: token }
+                }).then(function (response) {
+                    atualizaSaldo();
+                    subPage("sucesso_saque")
+                    $("#btn_solicitar_saque")
+                        .html('SOLICITAR SAQUE')
+                        .prop('disabled', false)
+
+                }).catch(function (error) {
+                    subPage("erro_saque");
+                    $("#btn_solicitar_saque")
+                        .html('SOLICITAR SAQUE')
+                        .prop('disabled', false)
+
+                });
+
+            } else {
+                subPage("erro_saque");
+            }
+
 
         })
 
@@ -145,21 +379,56 @@
 
             $(".mask-cpf").mask("999.999.999-99");
             $('.money').mask("#.##0,00", { reverse: true }).attr('maxlength', '9');
+            $(".mask-phone").mask("(99) 99999-9999");
             $(".mask-dinheiro")
                 .mask("######.##", {
                     reverse: true
                 })
         }
 
-        const VALIDAR = {
 
+
+        const VALIDAR = {
+            limite: function (id, money) {
+                let valor = money.split('.');
+                let real_explode = valor[0];
+                let real = real_explode.replace(".", "");
+                let centavos = '.' + valor[1];
+                let amount = real + centavos;
+                if (money.length <= 2) {
+                    amount = real + '.00';
+                } else {
+                    amount = real + centavos;
+                }
+
+
+                if (limit_saque > amount) {
+                    $("#" + id).removeClass('nok').addClass('ok').data('valor', amount)
+                } else {
+                    $("#" + id).removeClass('ok').addClass('nok').data('valor', 0)
+
+
+                }
+
+
+            },
+            chave: function (id, chave) {
+                if (chave != " ") {
+                    $("#" + id).removeClass('nok').addClass('ok').data('valor', chave)
+                } else {
+                    $("#" + id).removeClass('ok').addClass('nok').data('valor', 0)
+                }
+
+
+            },
             cpf: function (id, cpf) {
                 let status = CPF.validate(cpf);
                 if (status) {
-                    $("#" + id).removeClass('nok').addClass('ok')
+                    $("#" + id).removeClass('nok').addClass('ok').data('valor', cpf)
                 } else {
-                    $("#" + id).removeClass('ok').addClass('nok')
+                    $("#" + id).removeClass('ok').addClass('nok').data('valor', 0)
                 }
+
 
             },
             nome: function (id, nome) {
@@ -172,17 +441,19 @@
                         $("#" + id)
                             .removeClass('ok')
                             .addClass('nok')
+
                     } else {
                         $("#" + id)
                             .removeClass('nok')
                             .addClass('ok')
+                            .data('valor', nome)
+
                     }
                 } else {
                     $("#" + id)
                         .removeClass('ok')
-                        .addClass('nok')
+                        .addClass('nok').data('valor', 0)
                 }
-
 
             },
             money: function (id, money) {
@@ -198,6 +469,7 @@
                     $("#" + id)
                         .removeClass('ok')
                         .addClass('nok')
+                        .data('valor', 0)
 
                 } else {
                     $("#" + id)
@@ -205,17 +477,79 @@
                         .addClass('ok')
                         .data('valor', amount)
                 }
+
+            },
+            email: function (id, email) {
+                let arroba = email.indexOf('@');
+                let email1 = email.toLowerCase()
+                if (arroba > 0) {
+                    let apos_arroba = email.split('@')[1];
+                    let existe_ponto = apos_arroba.indexOf('.');
+                    if (existe_ponto > 0) {
+                        let novo_email = apos_arroba.split('.')[1];
+                        if (novo_email.length > 1) {
+                            $("#" + id)
+                                .removeClass('nok')
+                                .addClass('ok')
+                                .data('valor', email1)
+                        } else {
+                            $("#" + id)
+                                .removeClass('ok')
+                                .addClass('nok')
+                                .data('valor', 0)
+
+                        }
+
+
+                    } else {
+                        $("#" + id)
+                            .removeClass('ok')
+                            .addClass('nok')
+                            .data('valor', 0)
+
+                    }
+
+                } else {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+                        .data('valor', 0)
+                }
+            },
+            telefone: function (id, telefone) {
+                let tel1 = telefone.replaceAll("(", "")
+                    .replaceAll(")", "")
+                    .replaceAll("-", "")
+                    .replaceAll(" ", "")
+                let novo_cel = '+55' + tel1;
+
+                if (telefone.length > 14) {
+                    $("#" + id)
+                        .removeClass('nok')
+                        .addClass('ok')
+                        .data('valor', novo_cel)
+                } else {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+                        .data('valor', 0)
+                }
+
+            },
+            data: function (data) {
+                let valores = Object.values(data);
+                let retorno = "";
+
+                if (valores.includes(undefined) || valores.includes(0)) {
+                    return false
+                } else {
+                    return true
+                }
             }
+
         }
 
-        function jsonEnvio(cl) {
-            let classe = document.getElementsByClassName(cl);
-            let json = {};
-            for (let i = 0; i < classe.length; i++) {
-                json[classe[i].getAttribute("id")] = classe[i].value;
-            }
-            return json;
-        }
+
 
     </script>
 </body>

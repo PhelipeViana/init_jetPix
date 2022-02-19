@@ -11,6 +11,7 @@
     <script src="index/js/jquery.js"></script>
     <script src="index/js/mascara.js"></script>
     <script src="index/js/ddi.js"></script>
+    <script src="index/js/cpf.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 </head>
@@ -26,8 +27,8 @@
 
                 <input type="text" placeholder="nomeCompleto" class="fadeIn second input_formulario" id="nomeCompleto"
                     onchange="ultimoNome(), VALIDAR.nome(this.id,this.value)" required minlength="5">
-
-
+                <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
+                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)">
                 <input type="text" placeholder="birthday" class="fadeIn second input_formulario item mask-date"
                     id="birthday" required minlength="9" onchange="VALIDAR.nascimento(this.id,this.value)">
 
@@ -76,7 +77,11 @@
         $("#form_cadastro").submit(function (e) {
             e.preventDefault();
             let data = jsonEnvio('item');
-            cadastrar(data)
+            if (VALIDAR.data(data)) {
+                cadastrar(data)
+            } else {
+                alert('Ops!Verifique os dados')
+            }
         })
 
         function cadastrar(data) {
@@ -87,12 +92,13 @@
             }).then(function (response) {
                 console.log(response)
                 alert('Sucesso!')
+                window.location.assign('login.html')
             }).catch(function (error) {
                 console.log(error.response.data);
                 alert('Erro no Cadastro')
             });
 
-            console.log(data)
+
         }
 
 
@@ -247,6 +253,26 @@
                     $("#" + id)
                         .removeClass('ok')
                         .addClass('nok')
+                }
+            },
+            cpf: function (id, cpf) {
+                let status = CPF.validate(cpf);
+                if (status) {
+                    $("#" + id).removeClass('nok').addClass('ok').data('valor', cpf)
+                } else {
+                    $("#" + id).removeClass('ok').addClass('nok').data('valor', 0)
+                }
+
+
+            },
+            data: function (data) {
+                let valores = Object.values(data);
+                let retorno = "";
+
+                if (valores.includes(undefined) || valores.includes(0)) {
+                    return false
+                } else {
+                    return true
                 }
             }
         }
