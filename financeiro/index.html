@@ -6,85 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport"
         content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
-    <link rel="stylesheet" href="index/css/financeiro.css">
-
-
+    <link rel="stylesheet" href="css/financeiro.css">
     <title>Financeiro</title>
-    <style>
-        .cx_group_btn {
-            display: flex;
-        }
-
-        #await_qrcode {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .botao_tab {
-            background-color: #56baed;
-            border: none;
-            color: white;
-            padding: 15px 15px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            text-transform: uppercase;
-            font-size: 13px;
-            width: 45%;
-            -webkit-box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
-            box-shadow: 0 10px 30px 0 rgba(95, 186, 233, 0.4);
-            -webkit-border-radius: 5px 5px 5px 5px;
-            border-radius: 5px 5px 5px 5px;
-            margin: 5px 20px 40px 20px;
-            -webkit-transition: all 0.3s ease-in-out;
-            -moz-transition: all 0.3s ease-in-out;
-            -ms-transition: all 0.3s ease-in-out;
-            -o-transition: all 0.3s ease-in-out;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .botao_tab.btn_ativo {
-            background-color: red;
-        }
-
-        .tela_lottie-player {
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            display: flex;
-        }
-
-        .text-danger {
-            color: 'red';
-        }
-
-        .text-primary {
-            color: 'blue';
-        }
-
-        .select_tipo {
-
-            background-color: #f6f6f6;
-            border: none;
-            color: #0d0d0d;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 5px;
-            width: 30%;
-            border: 2px solid #f6f6f6;
-            -webkit-transition: all 0.5s ease-in-out;
-            -moz-transition: all 0.5s ease-in-out;
-            -ms-transition: all 0.5s ease-in-out;
-            -o-transition: all 0.5s ease-in-out;
-            transition: all 0.5s ease-in-out;
-            -webkit-border-radius: 5px 5px 5px 5px;
-            border-radius: 5px 5px 5px 5px;
-        }
-    </style>
+    
 </head>
 
 <body style="display: none;">
@@ -96,7 +20,8 @@
                 <button class="botao_tab" data-page="sacar" id="tela_sacar">SACAR</button>
             </div>
             <h1 class="saldo"></h1>
-            <div id="depositar" class="tela" style="display: none;">
+            <a href="../index.html">Sair</a>
+            <div id="depositar" class="tela">
                 <h1>GERAR DEPOSITO</h1>
 
                 <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
@@ -123,7 +48,7 @@
                 <input type="text" id="link_qrcode" style="border: none;">
                 <button id="btn_copia_link" class="botao">COPIAR LINK DE PAGAMENTO</button>
             </div>
-            <div id="sacar" class="tela">
+            <div id="sacar" class="tela" style="display: none;">
                 <h1>SACAR</h1>
                 <input type="text" id="amountsaque" class="fadeIn second input_formulario mask-dinheiro item"
                     onkeyup="VALIDAR.limite(this.id,this.value)" onkeydown="VALIDAR.limite(this.id,this.value)">
@@ -136,10 +61,7 @@
                         <option value="aleatoria">CHAVE ALEATORIA</option>
                     </select>
                     <div id="input_validate"></div>
-
                 </div>
-
-
                 <button class="botao" id="btn_solicitar_saque">SOLICITAR SAQUE</button>
             </div>
             <div id="sucesso_saque" class="tela" style="display: none;">
@@ -153,7 +75,8 @@
                 <button class="botao btn_ativo" onclick="solicitarNovamente()">VOLTAR</button>
             </div>
             <div id="erro_saque" class="tela" style="display: none;">
-                <div class=" tela_lottie-player">
+                <h3>Chave Pix não encontrada!</h3>
+                <div class="tela_lottie-player">
                     <lottie-player autoplay mode="normal"
                         src="https://assets7.lottiefiles.com/packages/lf20_sii02z44.json" style="width: 350px">
                     </lottie-player>
@@ -164,10 +87,10 @@
 
         </div>
     </div>
-    <script src="index/js/jquery.js"></script>
+    <script src="js/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="index/js/mascara.js"></script>
-    <script src="index/js/cpf.js"></script>
+    <script src="js/mascara.js"></script>
+    <script src="js/cpf.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/lottie-player.js"></script>
 
     <script>
@@ -192,22 +115,22 @@
             switch (valor) {
                 case 'cpf':
                     corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item mask-cpf'
-                        placeholder="DIGITE SEU CPF" onchange="VALIDAR.cpf(this.id,this.value)">`
+                        placeholder="DIGITE SEU CPF" onchange="VALIDAR.cpf(this.id,this.value)" onkeydown="VALIDAR.cpf(this.id,this.value)" onkeyup="VALIDAR.cpf(this.id,this.value)">`
                     initializeMasks();
                     break;
                 case 'email':
                     corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item'
-                        placeholder="DIGITE SEU EMAIL" onchange="VALIDAR.email(this.id,this.value)">`
+                        placeholder="DIGITE SEU EMAIL" onchange="VALIDAR.email(this.id,this.value)" onkeydown="VALIDAR.cpf(this.id,this.value)" onkeyup="VALIDAR.cpf(this.id,this.value)">`
                     initializeMasks();
                     break;
                 case 'telefone':
                     corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario  mask-phone item'
-                        placeholder="DIGITE SEU TELEFONE" onchange="VALIDAR.telefone(this.id,this.value)">`
+                        placeholder="DIGITE SEU TELEFONE" onchange="VALIDAR.telefone(this.id,this.value)" onkeydown="VALIDAR.cpf(this.id,this.value)" onkeyup="VALIDAR.cpf(this.id,this.value)">`
                     initializeMasks();
                     break;
                 case 'aleatoria':
                     corpo_input = `<input type='text' id='pixId' class='fadeIn second input_formulario item'
-                        placeholder="INSIRA A CHAVE" onchange="VALIDAR.chave(this.id,this.value)">`
+                        placeholder="INSIRA A CHAVE" onchange="VALIDAR.chave(this.id,this.value)" onkeydown="VALIDAR.cpf(this.id,this.value)" onkeyup="VALIDAR.cpf(this.id,this.value)">`
                     initializeMasks();
                     break;
 
@@ -233,9 +156,10 @@
                 localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(obj))
                 dadosUsuario();
             }).catch(function (error) {
-                if (error.error == "Invalid token") {
-                    finalizarSessao()
-                }
+                // if (error.error == "Invalid token") {
+                //     finalizarSessao()
+                // }
+                console.log(error)
             });
 
         }
@@ -383,7 +307,7 @@
             $(".mask-dinheiro")
                 .mask("######.##", {
                     reverse: true
-                })
+                }).attr('maxlength', '9');
         }
 
 

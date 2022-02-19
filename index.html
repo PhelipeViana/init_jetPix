@@ -24,11 +24,9 @@
                 required>
             <input type="password" id="senha" class=" fadeIn second input_formulario" name="senha" placeholder="Senha"
                 required>
-            <button class="botao" onclick="logar()">ENTRAR</button>
-
-
+            <button class="botao" onclick="logar()" id='btn_entrar'>ENTRAR</button>
+            <a href="cadastro/index.html">CADASTRO</a>
         </div>
-
     </div>
     <script>
         function logar() {
@@ -59,14 +57,15 @@
 
         function error() {
             alert('Login/Senha não confere')
+            $("#btn_entrar").html('ERRO')
         }
         function success(response) {
             let token = response.data.token;
             let user = response.data.user;
             localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(user))
             localStorage.setItem('@JETPIX_TOKEN', token)
-            alert('sucesso!')
-            window.location.assign('financeiro.html');
+           $("#btn_entrar").html('SUCESSO')
+            window.location.assign('financeiro/index.html');
         }
 
         function validar(data) {

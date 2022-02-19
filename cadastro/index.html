@@ -7,12 +7,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
     <title>Cadastro</title>
-    <link rel="stylesheet" href="index/css/cadastro.css">
-    <script src="index/js/jquery.js"></script>
-    <script src="index/js/mascara.js"></script>
-    <script src="index/js/ddi.js"></script>
-    <script src="index/js/cpf.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="css/cadastro.css">
+
 
 </head>
 
@@ -20,7 +16,7 @@
     <div class="main fadeInDown">
         <div id="formContent">
             <div class="fadeIn fourth ">
-                <img src="index/foto.jpg" id="icon" alt="User Icon" style="width: 150px">
+                <img src="foto.jpg" id="icon" alt="User Icon" style="width: 150px">
             </div>
             <form id="form_cadastro">
 
@@ -69,6 +65,11 @@
         </div>
         <a href="index.html">LOGIN</a>
     </div>
+    <script src="js/jquery.js"></script>
+    <script src="js/mascara.js"></script>
+    <script src="js/ddi.js"></script>
+    <script src="js/cpf.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         jQuery(document).ready(function ($) {
             initializeMasks();
@@ -92,7 +93,7 @@
             }).then(function (response) {
                 console.log(response)
                 alert('Sucesso!')
-                window.location.assign('login.html')
+                window.location.assign('../index.html')
             }).catch(function (error) {
                 console.log(error.response.data);
                 alert('Erro no Cadastro')

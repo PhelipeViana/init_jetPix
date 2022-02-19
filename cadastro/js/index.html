@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="index/css/cadastro.css">
+
+
+</head>
+
+<body>
+    <div class="main fadeInDown">
+        <div id="formContent">
+            <div class="fadeIn fourth ">
+                <img src="index/foto.jpg" id="icon" alt="User Icon" style="width: 150px">
+            </div>
+            <form id="form_cadastro">
+
+
+                <input type="text" placeholder="nomeCompleto" class="fadeIn second input_formulario" id="nomeCompleto"
+                    onchange="ultimoNome(), VALIDAR.nome(this.id,this.value)" required minlength="5">
+                <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
+                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)">
+                <input type="text" placeholder="birthday" class="fadeIn second input_formulario item mask-date"
+                    id="birthday" required minlength="9" onchange="VALIDAR.nascimento(this.id,this.value)">
+
+                <input type="email" placeholder="email" class="fadeIn second input_formulario item" id="email" required
+                    onchange="VALIDAR.email(this.id,this.value)">
+                <input type="text" placeholder="address" class="fadeIn second input_formulario item" id="address"
+                    required>
+                <select id="SelecionaPais" class="fadeIn second select_formulario" required></select>
+                <input type="text" placeholder="City" class="fadeIn second input_formulario item" id="city" required>
+
+                <input type="text" placeholder="zipCode" class="fadeIn second input_formulario mask-cep item"
+                    id="zipCode" required>
+                <input type="text" placeholder="mobileNumberPhone"
+                    class="fadeIn second input_formulario item mask-phone" id="mobileNumberPhone" required
+                    minlength="15">
+                <input type="text" placeholder="userName" class="fadeIn second input_formulario item" id="userName"
+                    required>
+                <input type="password" placeholder="password" class="fadeIn second input_formulario item" id="password"
+                    required>
+                <input type="text" placeholder="bonusCode" class="fadeIn second input_formulario item" id="bonusCode">
+
+                <!--hidden  -->
+
+                <input type="hidden" placeholder="mobileNumberCountry" class="input item" id="mobileNumberCountry">
+                <input type="hidden" placeholder="currency" class="input item" id="currency" value="BRL">
+                <input type="hidden" placeholder="lastName" class="input item" id="lastName">
+                <input type="hidden" placeholder="firstName" class="input  item" id="firstName">
+                <input type="hidden" id="country" class="select item">
+
+
+                <!--hidden  -->
+
+                <div class="form_btn">
+                    <!-- <a href="recuperar.html" class="form_lembrar">Esqueci a senha</a> -->
+                    <button type="submit" class="botao">CADASTRAR</button>
+            </form>
+
+        </div>
+        <a href="index.html">LOGIN</a>
+    </div>
+    <script src="index/js/jquery.js"></script>
+    <script src="index/js/mascara.js"></script>
+    <script src="index/js/ddi.js"></script>
+    <script src="index/js/cpf.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        jQuery(document).ready(function ($) {
+            initializeMasks();
+            montarSelectPais()
+        });
+        $("#form_cadastro").submit(function (e) {
+            e.preventDefault();
+            let data = jsonEnvio('item');
+            if (VALIDAR.data(data)) {
+                cadastrar(data)
+            } else {
+                alert('Ops!Verifique os dados')
+            }
+        })
+
+        function cadastrar(data) {
+            axios({
+                method: 'post',
+                url: 'https://api-homolog.jetpix.bet/users/register',
+                data: data
+            }).then(function (response) {
+                console.log(response)
+                alert('Sucesso!')
+                window.location.assign('index.html')
+            }).catch(function (error) {
+                console.log(error.response.data);
+                alert('Erro no Cadastro')
+            });
+
+
+        }
+
+
+
+        function montarSelectPais() {
+            let corpo = "";
+            let val_selecionado = '';
+            let val_pais = '';
+            for (let i = 0; i < COUNTRY.length; i++) {
+                let selecionado = "";
+                if (COUNTRY[i].pais == 'Brasil') {
+                    selecionado = 'selected'
+                    val_selecionado = COUNTRY[i].ddi
+                    val_pais = COUNTRY[i].pais;
+                }
+
+                corpo += `<option value='${COUNTRY[i].ddi}' 
+                data-nome='${COUNTRY[i].pais}'
+                ${selecionado}
+                >
+                    ${COUNTRY[i].pais}
+                    </option>`
+            }
+
+            $("#SelecionaPais")
+                .html(corpo)
+                .on('change', function (e) {
+                    $("#mobileNumberCountry").val($(this).val())
+                    $("#country").val($(this).find(':selected').data('nome'))
+                })
+            $("#mobileNumberCountry").val(val_selecionado)
+            $("#country").val(val_pais)
+
+
+        }
+
+
+        function initializeMasks() {
+            $(".mask-credit-card").mask("9999 9999 9999 99999");
+            $(".mask-month-year").mask("99/9999");
+            $(".mask-date").mask("99/99/9999");
+            $(".mask-cep").mask("99999-999");
+            $(".mask-cpf").mask("999.999.999-99");
+            $(".mask-cnpj").mask("99.999.999/9999-99");
+            $(".mask-cellphone").mask("99999-9999");
+            $(".mask-onlyphone").mask("99999-9999");
+            $(".mask-phone").mask("(99) 99999-9999");
+            $(".mask-numhab").mask("99999999999");
+            $(".mask-placa").mask("999-999");
+            $(".mask-dinheiro")
+                .mask("######.##", {
+                    reverse: true
+                })
+                .attr('maxlength', '9');
+        }
+
+        function jsonEnvio(cl) {
+            let classe = document.getElementsByClassName(cl);
+            let json = {};
+            for (let i = 0; i < classe.length; i++) {
+                json[classe[i].getAttribute("id")] = classe[i].value;
+            }
+            return json;
+        }
+
+        function ultimoNome() {
+            var timestamp = new Date().getTime();
+            var nomeCompleto = $("#nomeCompleto").val();
+            var nome = nomeCompleto.split(" ")[0];
+            var qtdnome = nomeCompleto.split(" ").length;
+            var sobrenome = nomeCompleto.split(" ")[qtdnome - 1];
+            $("#lastName").val(sobrenome);
+            $("#firstName").val(nome);
+
+
+        }
+
+        const VALIDAR = {
+            nome: function (id, nome) {
+                let explode = nome.split(" ");
+                let space = nome.indexOf(' ');
+
+                if (space > 0) {
+                    let qtdnome = explode[1].length;
+                    if (qtdnome < 2) {
+                        $("#" + id)
+                            .removeClass('ok')
+                            .addClass('nok')
+                    } else {
+                        $("#" + id)
+                            .removeClass('nok')
+                            .addClass('ok')
+                    }
+                } else {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+                }
+
+
+            },
+            nascimento: function (id, data) {
+
+                var dia = data.split("/")[0];
+                var mes = data.split("/")[1];
+                var ano = data.split("/")[2];
+                var nova_data = new Date(ano, mes - 1, dia);
+
+                if ((nova_data.getMonth() + 1 != mes)
+                    || (nova_data.getDate() != dia)
+                    || (nova_data.getFullYear() != ano)) {
+
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+
+                } else {
+                    $("#" + id)
+                        .removeClass('nok')
+                        .addClass('ok')
+
+                }
+            },
+            email: function (id, email) {
+                let arroba = email.indexOf('@');
+
+                if (arroba > 0) {
+                    let apos_arroba = email.split('@')[1];
+                    let existe_ponto = apos_arroba.indexOf('.');
+                    if (existe_ponto > 0) {
+                        let novo_email = apos_arroba.split('.')[1];
+                        if (novo_email.length > 1) {
+                            $("#" + id)
+                                .removeClass('nok')
+                                .addClass('ok')
+                        } else {
+                            $("#" + id)
+                                .removeClass('ok')
+                                .addClass('nok')
+
+                        }
+
+
+                    } else {
+                        $("#" + id)
+                            .removeClass('ok')
+                            .addClass('nok')
+
+                    }
+
+                } else {
+                    $("#" + id)
+                        .removeClass('ok')
+                        .addClass('nok')
+                }
+            },
+            cpf: function (id, cpf) {
+                let status = CPF.validate(cpf);
+                if (status) {
+                    $("#" + id).removeClass('nok').addClass('ok').data('valor', cpf)
+                } else {
+                    $("#" + id).removeClass('ok').addClass('nok').data('valor', 0)
+                }
+
+
+            },
+            data: function (data) {
+                let valores = Object.values(data);
+                let retorno = "";
+
+                if (valores.includes(undefined) || valores.includes(0)) {
+                    return false
+                } else {
+                    return true
+                }
+            }
+        }
+
+    </script>
+</body>
+
+</html>
