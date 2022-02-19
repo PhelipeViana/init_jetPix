@@ -8,35 +8,31 @@
         content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
     <link rel="stylesheet" href="css/financeiro.css">
     <title>Financeiro</title>
-    
+
 </head>
 
 <body style="display: none;">
     <div class="main fadeInDown">
-
         <div id="formContent">
             <div class="cx_group_btn">
                 <button class="botao_tab btn_ativo" data-page="depositar">DEPOSITAR</button>
                 <button class="botao_tab" data-page="sacar" id="tela_sacar">SACAR</button>
             </div>
+            <button onclick="finalizarSessao()">Sair</button>
             <h1 class="saldo"></h1>
-            <a href="../index.html">Sair</a>
-            <div id="depositar" class="tela">
-                <h1>GERAR DEPOSITO</h1>
-
+         
+            <div id="depositar" class="tela" >
                 <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
                     placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)">
                 <input type="text" id="amount" class=" fadeIn second input_formulario money item" placeholder="Valor"
                     onchange="VALIDAR.money(this.id,this.value)">
-
+                <hr>
                 <button class="botao" id="btn_gerar_pix">GERAR PIX</button>
-
             </div>
             <div id="await_qrcode" class="tela tela_lottie-player" style="display: none;">
                 <lottie-player autoplay loop=false mode="normal"
                     src="https://assets2.lottiefiles.com/private_files/lf30_6miolmlf.json" style="width: 300px">
                 </lottie-player>
-
             </div>
 
             <div id="qrcode" class="tela" style="display: none;">
@@ -49,7 +45,7 @@
                 <button id="btn_copia_link" class="botao">COPIAR LINK DE PAGAMENTO</button>
             </div>
             <div id="sacar" class="tela" style="display: none;">
-                <h1>SACAR</h1>
+
                 <input type="text" id="amountsaque" class="fadeIn second input_formulario mask-dinheiro item"
                     onkeyup="VALIDAR.limite(this.id,this.value)" onkeydown="VALIDAR.limite(this.id,this.value)">
                 <div style="display: flex;">
@@ -156,10 +152,12 @@
                 localStorage.setItem('@JETPIX_USERDATA', JSON.stringify(obj))
                 dadosUsuario();
             }).catch(function (error) {
-                // if (error.error == "Invalid token") {
-                //     finalizarSessao()
-                // }
-                console.log(error)
+                if (error.response.status == 401) {
+                    finalizarSessao()
+
+                }
+
+
             });
 
         }
@@ -168,7 +166,7 @@
 
             localStorage.removeItem('@JETPIX_USERDATA')
             localStorage.removeItem('@JETPIX_TOKEN')
-            window.location.assign('index.html')
+            window.location.assign('../index.html')
         }
         function verifySessao() {
 
@@ -247,6 +245,10 @@
                 }).catch(function (error) {
                     subPage("depositar")
                     alert('Ops! Tente novamente mais tarde')
+                    if (error.response.status == 401) {
+                        finalizarSessao()
+
+                    }
 
                 });
 
@@ -289,6 +291,9 @@
                     $("#btn_solicitar_saque")
                         .html('SOLICITAR SAQUE')
                         .prop('disabled', false)
+                    if (error.response.data.error.message == "INVALID_TOKEN") {
+                        finalizarSessao()
+                    }
 
                 });
 

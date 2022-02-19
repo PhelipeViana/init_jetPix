@@ -21,30 +21,29 @@
             <form id="form_cadastro">
 
 
-                <input type="text" placeholder="nomeCompleto" class="fadeIn second input_formulario" id="nomeCompleto"
+                <input type="text" placeholder="Nome Completo" class="fadeIn second input_formulario" id="nomeCompleto"
                     onchange="ultimoNome(), VALIDAR.nome(this.id,this.value)" required minlength="5">
-                <input type="text" id="documentNumber" class=" fadeIn second input_formulario mask-cpf item"
-                    placeholder="CPF" onchange="VALIDAR.cpf(this.id,this.value)">
-                <input type="text" placeholder="birthday" class="fadeIn second input_formulario item mask-date"
-                    id="birthday" required minlength="9" onchange="VALIDAR.nascimento(this.id,this.value)">
+                <input type="text" id="documentNumber" class="fadeIn second input_formulario mask-cpf item"
+                    placeholder="CPF VÁLIDO" onchange="VALIDAR.cpf(this.id,this.value)">
+                <input type="text" placeholder="DATA DE NASCIMENTO"
+                    class="fadeIn second input_formulario item mask-date" id="birthday" required minlength="9"
+                    onchange="VALIDAR.nascimento(this.id,this.value)">
 
-                <input type="email" placeholder="email" class="fadeIn second input_formulario item" id="email" required
+                <input type="email" placeholder="EMAIL" class="fadeIn second input_formulario item" id="email" required
                     onchange="VALIDAR.email(this.id,this.value)">
-                <input type="text" placeholder="address" class="fadeIn second input_formulario item" id="address"
+                <input type="text" placeholder="ENDEREÇO" class="fadeIn second input_formulario item" id="address"
                     required>
                 <select id="SelecionaPais" class="fadeIn second select_formulario" required></select>
-                <input type="text" placeholder="City" class="fadeIn second input_formulario item" id="city" required>
-
-                <input type="text" placeholder="zipCode" class="fadeIn second input_formulario mask-cep item"
-                    id="zipCode" required>
-                <input type="text" placeholder="mobileNumberPhone"
-                    class="fadeIn second input_formulario item mask-phone" id="mobileNumberPhone" required
-                    minlength="15">
-                <input type="text" placeholder="userName" class="fadeIn second input_formulario item" id="userName"
+                <input type="text" placeholder="CEP" class="fadeIn second input_formulario mask-cep item" id="zipCode"
                     required>
-                <input type="password" placeholder="password" class="fadeIn second input_formulario item" id="password"
+                <input type="text" placeholder="TELEFONE" class="fadeIn second input_formulario item mask-phone"
+                    id="mobileNumberPhone" required minlength="15">
+                <input type="text" placeholder="APELIDO" class="fadeIn second input_formulario item" id="userName"
                     required>
-                <input type="text" placeholder="bonusCode" class="fadeIn second input_formulario item" id="bonusCode">
+                <input type="password" placeholder="SENHA" class="fadeIn second input_formulario item" id="password"
+                    required>
+                <input type="text" placeholder="CÓDIGO DE BONUS" class="fadeIn second input_formulario item"
+                    id="bonusCode">
 
                 <!--hidden  -->
 
@@ -55,15 +54,16 @@
                 <input type="hidden" id="country" class="select item">
 
 
+                <input type="hidden" placeholder="City" class="fadeIn second input_formulario item" id="city" required>
                 <!--hidden  -->
-
+                <hr>
                 <div class="form_btn">
-                    <!-- <a href="recuperar.html" class="form_lembrar">Esqueci a senha</a> -->
                     <button type="submit" class="botao">CADASTRAR</button>
+                </div>
             </form>
 
         </div>
-        <a href="index.html">LOGIN</a>
+
     </div>
     <script src="js/jquery.js"></script>
     <script src="js/mascara.js"></script>
@@ -91,12 +91,12 @@
                 url: 'https://api-homolog.jetpix.bet/users/register',
                 data: data
             }).then(function (response) {
-                console.log(response)
+
                 alert('Sucesso!')
                 window.location.assign('../index.html')
             }).catch(function (error) {
-                console.log(error.response.data);
-                alert('Erro no Cadastro')
+
+                alert('Ops! tente novamente mais tarde')
             });
 
 
@@ -217,10 +217,43 @@
                         .addClass('nok')
 
                 } else {
-                    $("#" + id)
-                        .removeClass('nok')
-                        .addClass('ok')
+                    //verificar idade
 
+                    if (idade(ano, mes, dia) >= 18) {
+                        $("#" + id)
+                            .removeClass('nok')
+                            .addClass('ok')
+                            .css('color', 'black')
+                    } else {
+                        alert('Ops! é necessario ser maior de idade')
+                        $("#" + id)
+                            .removeClass('ok')
+                            .addClass('nok')
+                            .css('color', 'red')
+
+                    }
+
+
+
+                }
+
+                function idade(ano_aniversario, mes_aniversario, dia_aniversario) {
+                    var d = new Date,
+                        ano_atual = d.getFullYear(),
+                        mes_atual = d.getMonth() + 1,
+                        dia_atual = d.getDate(),
+
+                        ano_aniversario = +ano_aniversario,
+                        mes_aniversario = +mes_aniversario,
+                        dia_aniversario = +dia_aniversario,
+
+                        quantos_anos = ano_atual - ano_aniversario;
+
+                    if (mes_atual < mes_aniversario || mes_atual == mes_aniversario && dia_atual < dia_aniversario) {
+                        quantos_anos--;
+                    }
+
+                    return quantos_anos < 0 ? 0 : quantos_anos;
                 }
             },
             email: function (id, email) {

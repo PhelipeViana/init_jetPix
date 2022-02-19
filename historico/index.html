@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=0.8, maximum-scale=0.8, minimum-scale=0.8, user-scalable=no, minimal-ui">
+    <link rel="stylesheet" href="css/historico.css">
+    <title>HISTORICO</title>
+
+</head>
+
+<body style="display: none;">
+    <div class="main fadeInDown">
+        <div id="formContent">
+            <div class="cx_group_btn">
+                <button class="botao_tab btn_ativo" data-page="transacoes">TRANSACOES</button>
+                <button class="botao_tab" data-page="depositar">DEPOSITAR</button>
+                <button class="botao_tab" data-page="sacar" id="tela_sacar">SACAR</button>
+            </div>
+            <div id="transacoes" class="tela">
+                TODAS AS TRANSAÇÕES
+            </div>
+            <div id="depositar" class="tela" style="display: none;">
+                AREA DOS DEPOSITAR
+            </div>
+            <div id="sacar" class="tela" style="display: none;">
+                AREA DE SACAR
+            </div>
+
+        </div>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/mascara.js"></script>
+
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@0.4.0/dist/lottie-player.js"></script>
+
+    <script>
+
+        let user = localStorage.getItem('@JETPIX_USERDATA')
+        let token = localStorage.getItem('@JETPIX_TOKEN')
+        let limit_saque = 0;
+        let URL = 'https://api-homolog.jetpix.bet/';
+
+        jQuery(document).ready(function ($) {
+            initializeMasks();
+            verifySessao()
+            //teste()
+        });
+
+        function teste() {
+            axios({
+                method: 'get',
+                url: URL + 'transactions/mime',
+                headers: { auth: token }
+            }).then(function (response) {
+                console.log(response)
+            }).catch(function (error) {
+                if (error.response.status == 401) {
+                    finalizarSessao()
+
+                }
+            });
+        }
+
+
+
+        function finalizarSessao() {
+
+            localStorage.removeItem('@JETPIX_USERDATA')
+            localStorage.removeItem('@JETPIX_TOKEN')
+            window.location.assign('../index.html')
+        }
+        function verifySessao() {
+
+            if (localStorage.getItem("@JETPIX_TOKEN") === null) {
+                finalizarSessao()
+            } else {
+                $("body").show()
+            }
+
+        }
+
+        function dadosUsuario() {
+            let user = localStorage.getItem('@JETPIX_USERDATA')
+            let dados = JSON.parse(user);
+            let balance = dados.balance;
+            let format_balance = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)
+            $(".saldo").html(format_balance)
+            $("#amountsaque").attr('placeholder', 'Valor máximo: ' + format_balance)
+        }
+
+
+        $(".botao_tab").on('click', function (e) {
+            $(".botao_tab").removeClass('btn_ativo')
+            $(this).addClass('btn_ativo')
+            let tela = $(this).data('page');
+            $(".tela").hide()
+            $("#" + tela).show()
+        })
+        function subPage(idTela) {
+            $(".tela").hide()
+            $("#" + idTela).show()
+        }
+
+
+        function initializeMasks() {
+
+            $(".mask-cpf").mask("999.999.999-99");
+            $('.money').mask("#.##0,00", { reverse: true }).attr('maxlength', '9');
+            $(".mask-phone").mask("(99) 99999-9999");
+            $(".mask-dinheiro")
+                .mask("######.##", {
+                    reverse: true
+                }).attr('maxlength', '9');
+        }
+
+
+
+        // const VALIDAR = {
+
+
+        // }
+
+
+
+    </script>
+</body>
+
+</html>
