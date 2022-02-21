@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-image: url('../bg5.jpg');
+}
+
+/* STRUCTURE */
+
+.modal_box {
+    display: none;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+
+
+
+}
+
+.modal_body {
+
+
+    background: rgba(10, 23, 55, 0.5);
+    height: 450px;
+    width: 100%;
+    position: relative;
+    padding: 0px;
+    text-align: center;
+    z-index: 1000;
+
+}
+
+.bodymodal {
+    background-color: rgba(10, 23, 55, 0.8);
+}
+
+/* ANIMATIONS */
+
+.efeitodown {
+    -webkit-animation-name: efeitodown;
+    animation-name: efeitodown;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.modal_close {
+    float: right;
+}
+
+@-webkit-keyframes efeitodown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -100%, 0);
+        transform: translate3d(0, -100%, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+@keyframes efeitodown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -100%, 0);
+        transform: translate3d(0, -100%, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
