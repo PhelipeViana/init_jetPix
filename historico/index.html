@@ -11,28 +11,43 @@
     <style>
         #tela_transacoes {
             display: contents;
-            border: 1px solid red;
+
 
         }
 
         .transacoes_item {
             margin: 15px;
-
+            cursor: pointer;
         }
 
-        .saque {
+
+        .deposito {
             border-left: 5px solid green;
             text-align: left;
         }
-       
 
-        .deposito {
-            border-right: 5px solid yellowgreen;           
+        .deposito:hover {
+            background-color: green;
+            color: white;
+        }
+        .saque {
+            border-right: 5px solid yellowgreen;
             text-align: right;
         }
 
+        .saque:hover {
+            background-color:yellowgreen;
+            color: white;
+        }
+
+
+
         .img_btn {
             width: 30px;
+        }
+
+        .img_link {
+            width: 20px;
         }
     </style>
 
@@ -41,26 +56,43 @@
 <body style="display: none;">
     <div class="main fadeInDown">
         <div id="formContent">
+
             <a href="../financeiro/index.html">FINANCEIRO</a>
             <div class="cx_group_btn">
-                <button class="botao_tab btn_ativo" onclick="reset()">
-                    TRANSACOES
+                <button class="botao_tab" onclick="reset()" id='btn_transacao'>
+                    TRANSAÇÃO
                     <hr>
                     <img src="../historico/transacoes.png" alt="transacoes" class="img_btn">
                 </button>
-                <button class="botao_tab" onclick="filter('deposito')">
-                    DEPOSITOS
-                    <hr>
-                    <img src="../historico/deposito.png" alt="depositos" class="img_btn">
-                </button>
+
                 <button class="botao_tab" onclick="filter('saque')">
                     SAQUES
                     <hr>
                     <img src="../historico/saques.png" alt="saques" class="img_btn">
                 </button>
+                <button class="botao_tab" onclick="filter('deposito')">
+                    DEPÓSITOS
+                    <hr>
+                    <img src="../historico/deposito.png" alt="depositos" class="img_btn">
+                </button>
             </div>
-            <div id="tela_transacoes"></div>
+            <select id="select_limit" onchange="dataTransacao(this.value)">
+                <option value="20" selected>20 Últimos Registros</option>
+                <option value="30">30 Últimos Registros</option>
+                <option value="50">50 Últimos Registros</option>
+                <option value="100">100 Últimos Registros</option>
+            </select>
+
+            <div id="tela_transacoes">
+                <div class="tela_lottie-player">
+                    <lottie-player autoplay mode="normal" loop=true
+                        src="https://assets3.lottiefiles.com/private_files/lf30_zg4oeggu.json" style="width: 350px">
+                    </lottie-player>
+                </div>
+            </div>
         </div>
+
+
     </div>
     <script src="js/jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -76,16 +108,15 @@
         let URL = 'https://api-homolog.jetpix.bet/';
 
         jQuery(document).ready(function ($) {
-            initializeMasks();
             verifySessao()
-            dataTransacao();
+            dataTransacao(10);
         });
 
 
-        function dataTransacao() {
+        function dataTransacao(limit) {
             axios({
                 method: 'get',
-                url: URL + 'transactions/mime',
+                url: URL + 'transactions/mime?take=' + limit,
                 headers: { auth: token }
             }).then(function (response) {
                 montarTelaTransacao(response);
@@ -93,10 +124,11 @@
                 if (error.response.status == 401) {
                     finalizarSessao()
                 }
-                console.log(error.response)
+
             });
         }
         function montarTelaTransacao(response) {
+
             let corpo = "";
             let indice = response.data;
             if (indice != null) {
@@ -104,20 +136,38 @@
                 for (let i = 0; i < indice.length; i++) {
                     let tipo = indice[i].type;
                     let amount = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(indice[i].amount)
+                    let data_solicitacao = new Date(indice[i].createdAt).toLocaleDateString('pt-BR', {
+                        timeZone: 'UTC', hour: "2-digit", minute: "2-digit",
+                        second: "2-digit",
+                    });
                     if (tipo == 1) {
-                        corpo += `<div class='deposito transacoes_item'>Deposito: ${amount}</div>`
+                        corpo += `<div class='deposito transacoes_item'>
+                            <p>Depósito</p>
+                            <p><img src="../historico/cent.png" class="img_link"> ${amount}</p>
+                            <p><img src="../historico/clock.png" class="img_link"> ${data_solicitacao}</p>
+                            </div>`
                     } else {
-                        corpo += `<div class='saque transacoes_item'>Saque: ${amount}</div>`
+                        corpo += `<div class='saque transacoes_item'>
+                            <p>Saque</p>
+                            <p>${amount} <img src="../historico/cent.png" class="img_link"></p>
+                            <p>${data_solicitacao} <img src="../historico/clock.png" class="img_link"></p>
+                            </div>`
                     }
                 }
 
             } else {
                 corpo = `ERRO NO JSON`
             }
-            console.log(response.data)
+
 
             $("#tela_transacoes").html(corpo)
+            $(".botao_tab").removeClass('btn_ativo')
+            $("#btn_transacao").addClass('btn_ativo')
+
         }
+        let mes_anterior = new Date().getMonth();
+        let corpo_option = `<option value='${mes_anterior}'>Somente mês anterior</option>`
+        $("#select_limit").append(corpo_option)
 
 
 
@@ -147,21 +197,9 @@
         // }
 
 
-        $(".botao_tab").on('click', function (e) {
-            $(".botao_tab").removeClass('btn_ativo')
-            $(this).addClass('btn_ativo')
-        })
 
-        function initializeMasks() {
 
-            $(".mask-cpf").mask("999.999.999-99");
-            $('.money').mask("#.##0,00", { reverse: true }).attr('maxlength', '9');
-            $(".mask-phone").mask("(99) 99999-9999");
-            $(".mask-dinheiro")
-                .mask("######.##", {
-                    reverse: true
-                }).attr('maxlength', '9');
-        }
+
 
 
 
@@ -170,17 +208,24 @@
 
         // }
 
+        $(".botao_tab").on('click', function (e) {
+            $(".botao_tab").removeClass('btn_ativo')
+            $(this).addClass('btn_ativo')
+        })
+
         function filter(el) {
             var item = document.getElementsByClassName('transacoes_item');
-
+          
             for (var i = 0; i < item.length; i++) {
                 if (item[i].classList.contains(el)) {
                     item[i].style.display = "block";
+                  
                 }
                 else {
                     item[i].style.display = "none";
                 }
             }
+       
 
         };
 
